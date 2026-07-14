@@ -1,28 +1,8 @@
-# Python
 venv/
 __pycache__/
 *.pyc
-*.pyo
-*.pyd
-.Python
-*.so
-*.egg
-*.egg-info/
-dist/
-build/
-*.log
-
-# VS Code
 .vscode/
-*.code-workspace
-
-# Arduino
-*.ino.hex
-*.elf
-
-# Git
-*.orig
-
-# Sistemas operacionais
+*.log
 .DS_Store
-Thumbs.db
+*.png
+*.jpg
