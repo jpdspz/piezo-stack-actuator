@@ -1,3 +1,3 @@
-# Vibration Control using a piezo stack actuatorr
+# Vibration control using a piezo stack actuator
 
 Under construction.
