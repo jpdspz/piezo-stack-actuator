@@ -1,5 +1,9 @@
 import numpy as np
 from utils import ch, sh, c, s
+from scipy.linalg import null_space
+import matplotlib.pyplot as plt
+import os
+import datetime
 
 # Parâmetros físicos
 E1 = 2.78e9
@@ -24,6 +28,10 @@ a1 = 0.01 + 0.009
 a2 = 0.102
 x = [0.0, a1 - 0.009, a1 + 0.009, (a1 + a2)/2, a2 - 0.009, a2 + 0.009, L]
 m_a = 0.14
+
+# Variáveis globais para controlar a pergunta de sobrescrita
+_ask_overwrite_done = False
+_overwrite_all = False
 
 def build_matrix(omega):
     beta = [(mu[i] * omega**2 / S[i]) ** 0.25 for i in range(6)]
@@ -139,3 +147,147 @@ def build_matrix(omega):
     ])
 
     return M
+
+
+def get_mode_shape(omega, n_points_per_segment=50):
+    """
+    Compute the mode shape for a given natural frequency omega.
+    Returns:
+        x_vals: array of x positions along the beam
+        phi_vals: array of mode shape values
+    """
+    # Build the matrix at this omega
+    M = build_matrix(omega)
+    
+    # Find the null space (eigenvector)
+    # The null space gives a vector X such that M * X = 0
+    null_vec = null_space(M)
+    
+    # The null space may have more than one column if the matrix is rank-deficient
+    # We take the first column (the most significant)
+    X = null_vec[:, 0]
+    
+    # Extract coefficients for each segment
+    # X has 24 entries: 4 per segment
+    coeffs = []
+    for i in range(6):
+        A_i = X[4*i + 0]
+        B_i = X[4*i + 1]
+        C_i = X[4*i + 2]
+        D_i = X[4*i + 3]
+        coeffs.append((A_i, B_i, C_i, D_i))
+    
+    # Compute beta_i for this omega
+    beta = [(mu[i] * omega**2 / S[i]) ** 0.25 for i in range(6)]
+    
+    # Evaluate the mode shape along the beam
+    x_vals = []
+    phi_vals = []
+    
+    # For each segment
+    for i in range(6):
+        # Define the domain of the segment
+        x_start = x[i]
+        x_end = x[i+1]
+        
+        # Create points within the segment
+        x_seg = np.linspace(x_start, x_end, n_points_per_segment)
+        
+        A_i, B_i, C_i, D_i = coeffs[i]
+        b_i = beta[i]
+        
+        # Evaluate the mode shape
+        phi_seg = (A_i * np.cosh(b_i * x_seg) +
+                   B_i * np.sinh(b_i * x_seg) +
+                   C_i * np.cos(b_i * x_seg) +
+                   D_i * np.sin(b_i * x_seg))
+        
+        x_vals.extend(x_seg)
+        phi_vals.extend(phi_seg)
+    
+    # Convert to numpy arrays
+    x_vals = np.array(x_vals)
+    phi_vals = np.array(phi_vals)
+    
+    return x_vals, phi_vals
+
+
+def plot_mode_shape(omega, mode_index=None, n_points_per_segment=50,
+                    save=False, base_filename=None, plot_number=None, show=True):
+    """
+    Plot the mode shape for a given natural frequency.
+    """
+    global _ask_overwrite_done, _overwrite_all
+
+    x_vals, phi_vals = get_mode_shape(omega, n_points_per_segment)
+    
+    # Normalize the mode shape (so that max = 1)
+    phi_vals = phi_vals / np.max(np.abs(phi_vals))
+    
+    # Compute frequency in Hz
+    f_hz = omega / (2 * np.pi)
+
+    now = datetime.datetime.now()
+    date_str = now.strftime("%Y-%m-%d")
+    time_str = now.strftime("%Hh%Mmin%Ss")
+    datetime_str = now.strftime("%Y-%m-%d %H:%M:%S")
+    
+    # Create figure and axes using object-oriented approach
+    fig, ax = plt.subplots(figsize=(10, 6))
+    
+    ax.plot(x_vals, phi_vals, linewidth=2)
+    ax.axhline(y=0, color='k', linestyle='--', alpha=0.5)
+    ax.set_xlabel('Position along beam (m)')
+    ax.set_ylabel('Mode shape (normalized)')
+    
+    if mode_index is not None:
+        ax.set_title(rf'Mode {mode_index}: f = {f_hz:.1f} Hz (ω = {omega:.0f} rad/s)')
+    else:
+        ax.set_title(rf'Mode shape: f = {f_hz:.1f} Hz (ω = {omega:.0f} rad/s)')
+    
+    ax.grid(True)
+    
+    # Save if requested
+    if save:
+        figures_dir = os.path.join(os.getcwd(), 'Figures')
+        os.makedirs(figures_dir, exist_ok=True)
+
+        if base_filename is None:
+            mode_str = f"mode{mode_index:02d}" if mode_index is not None else "mode"
+            base_filename = f"{mode_str}"
+
+        if plot_number is not None:
+            filename = f"{base_filename}_{plot_number}"
+        else:
+            filename = f"{base_filename}"
+
+        full_path = os.path.join(figures_dir, f"{filename}.png")
+
+        if os.path.exists(full_path):
+            if _overwrite_all:
+                response = 'y'
+            else:
+                print(f"\nFile '{filename}.png' already exists.")
+                response = input("Overwrite? (y/n/a): ").strip().lower()
+                
+                if response == 'a':
+                    _overwrite_all = True
+                    response = 'y'
+                elif response not in ('y', 'yes', 's', 'sim'):
+                    response = 'n'
+
+            if response == 'n':
+                print(f"Skipping: {full_path} (file already exists)")
+                plt.close(fig)
+                # Return 4 values consistently
+                return None, None, x_vals, phi_vals
+
+        plt.savefig(full_path, dpi=150, bbox_inches='tight')
+        print(f"Figure saved to: {full_path}")
+
+    if show:
+        plt.show()
+    else:
+        plt.close(fig)
+
+    return fig, ax, x_vals, phi_vals
