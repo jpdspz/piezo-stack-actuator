@@ -1,4 +1,4 @@
-Start time: 16/07/2026 23:12:35
+Start time: 17/07/2026 00:04:37
 
 === With actuator ===
 Raízes encontradas: 6
@@ -40,5 +40,5 @@ Comparison plot saved to: E:\Pesquisa\Piezo stack actuator\Outputs\Comparison mo
 Comparison plot saved to: E:\Pesquisa\Piezo stack actuator\Outputs\Comparison mode 4.png
 Comparison plot saved to: E:\Pesquisa\Piezo stack actuator\Outputs\Comparison mode 5.png
 
-End time: 16/07/2026 23:12:39
-Total runtime: 3.93 s
+End time: 17/07/2026 00:04:41
+Total runtime: 3.98 s

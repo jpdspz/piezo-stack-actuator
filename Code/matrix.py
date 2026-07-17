@@ -216,6 +216,16 @@ def plot_mode_shape(omega, S, mu, x, m_a, mode_index=None, n_points_per_segment=
     fig, ax = plt.subplots(figsize=(10, 6))
     
     ax.plot(x_vals, phi_vals, linewidth=2)
+    
+    # Mark the bolt locations (x1, x2, x4, x5)
+    if m_a != 0:
+        bolt_positions = [x[1], x[2], x[4], x[5]]  # x1, x2, x4, x5
+        bolt_phi = np.interp(bolt_positions, x_vals, phi_vals)  # Get phi values at those x positions
+
+        ax.scatter(bolt_positions, bolt_phi, 
+                   facecolors='white', edgecolors='black', s=50, zorder=5, 
+                label='Actuator fixing points', linewidth=1)
+    
     ax.axhline(y=0, color='k', linestyle='--', alpha=0.5)
     ax.set_xlabel('Position along beam (m)')
     ax.set_ylabel('Mode shape (normalized)')

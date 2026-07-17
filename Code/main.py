@@ -145,22 +145,20 @@ if __name__ == "__main__":
                             filename=f"Mode {i+1:01d} without actuator",
                             mode_index=None, save=save_option_mode_shape_txt)
 
-    if save_option_comparison_plots:
-        # Compare modes (with vs without actuator)
-        print("\n--- Comparing modes ---")
-        for i in range(1, 6):
-            load_and_plot_comparison(
-                filename_with=f"Mode {i:01d} with actuator.txt",
-                filename_without=f"Mode {i:01d} without actuator.txt",
-                label_with="With actuator",
-                label_without="Without actuator",
-                mode_index=i,
-                show=show_option_comparison_plots,
-                save=save_option_comparison_plots,
-                save_name=f"Comparison mode {i:01d}"
-            )
-    else:
-        pass
+    # Compare modes (with vs without actuator)
+    print("\n--- Comparing modes ---")
+    for i in range(1, 6):
+        load_and_plot_comparison(
+            filename_with=f"Mode {i:01d} with actuator.txt",
+            filename_without=f"Mode {i:01d} without actuator.txt",
+            label_with="With actuator",
+            label_without="Without actuator",
+            mode_index=i,
+            show=show_option_comparison_plots,
+            save=save_option_comparison_plots,
+            save_name=f"Comparison mode {i:01d}",
+            bolt_positions=[x[1], x[2], x[4], x[5]]
+        )
 
 # Record end time
 end_time = time.time()
