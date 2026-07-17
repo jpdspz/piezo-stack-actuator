@@ -1,0 +1,44 @@
+Start time: 16/07/2026 23:12:35
+
+=== With actuator ===
+Raízes encontradas: 6
+     ω (rad/s)        f (Hz)
+ 1      79.186        12.603
+ 2     231.553        36.853
+ 3     821.127       130.686
+ 4    2325.625       370.135
+ 5    4273.509       680.150
+ 6    5366.597       854.120
+
+=== Without actuator ===
+Raízes encontradas: 5
+     ω (rad/s)        f (Hz)
+ 1      79.485        12.650
+ 2     498.123        79.279
+ 3    1394.758       221.983
+ 4    2733.170       434.997
+ 5    4518.125       719.082
+
+--- Saving mode shapes with actuator ---
+Mode shape data saved to: E:\Pesquisa\Piezo stack actuator\Outputs\Mode 1 with actuator.txt
+Mode shape data saved to: E:\Pesquisa\Piezo stack actuator\Outputs\Mode 2 with actuator.txt
+Mode shape data saved to: E:\Pesquisa\Piezo stack actuator\Outputs\Mode 3 with actuator.txt
+Mode shape data saved to: E:\Pesquisa\Piezo stack actuator\Outputs\Mode 4 with actuator.txt
+Mode shape data saved to: E:\Pesquisa\Piezo stack actuator\Outputs\Mode 5 with actuator.txt
+
+--- Saving mode shapes without actuator ---
+Mode shape data saved to: E:\Pesquisa\Piezo stack actuator\Outputs\Mode 1 without actuator.txt
+Mode shape data saved to: E:\Pesquisa\Piezo stack actuator\Outputs\Mode 2 without actuator.txt
+Mode shape data saved to: E:\Pesquisa\Piezo stack actuator\Outputs\Mode 3 without actuator.txt
+Mode shape data saved to: E:\Pesquisa\Piezo stack actuator\Outputs\Mode 4 without actuator.txt
+Mode shape data saved to: E:\Pesquisa\Piezo stack actuator\Outputs\Mode 5 without actuator.txt
+
+--- Comparing modes ---
+Comparison plot saved to: E:\Pesquisa\Piezo stack actuator\Outputs\Comparison mode 1.png
+Comparison plot saved to: E:\Pesquisa\Piezo stack actuator\Outputs\Comparison mode 2.png
+Comparison plot saved to: E:\Pesquisa\Piezo stack actuator\Outputs\Comparison mode 3.png
+Comparison plot saved to: E:\Pesquisa\Piezo stack actuator\Outputs\Comparison mode 4.png
+Comparison plot saved to: E:\Pesquisa\Piezo stack actuator\Outputs\Comparison mode 5.png
+
+End time: 16/07/2026 23:12:39
+Total runtime: 3.93 s

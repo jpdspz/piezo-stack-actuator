@@ -5,35 +5,11 @@ import matplotlib.pyplot as plt
 import os
 import datetime
 
-# Parâmetros físicos
-E1 = 2.78e9
-I1 = 7.54e-11
-rho1 = 1050
-A1 = 1.0e-4
-mu1 = rho1 * A1
-S1 = E1 * I1
-
-E2 = 200e9
-I2 = 1.0e-11
-rho2 = 7800
-A2 = 3.0e-5
-mu2 = rho2 * A2
-S2 = E2 * I2
-
-mu = [mu1, mu1 + mu2, mu1, mu1, mu1 + mu2, mu1]
-S  = [S1,  S1 + S2,   S1,  S1,  S1 + S2,   S1]
-
-L = 0.25
-a1 = 0.01 + 0.009
-a2 = 0.102
-x = [0.0, a1 - 0.009, a1 + 0.009, (a1 + a2)/2, a2 - 0.009, a2 + 0.009, L]
-m_a = 0.14
-
 # Variáveis globais para controlar a pergunta de sobrescrita
 _ask_overwrite_done = False
 _overwrite_all = False
 
-def build_matrix(omega):
+def build_matrix(omega, S, mu, x, m_a):
     beta = [(mu[i] * omega**2 / S[i]) ** 0.25 for i in range(6)]
     n_seg = 6
     n_points = n_seg + 1
@@ -149,7 +125,7 @@ def build_matrix(omega):
     return M
 
 
-def get_mode_shape(omega, n_points_per_segment=50):
+def get_mode_shape(omega, S, mu, x, m_a, n_points_per_segment=50):
     """
     Compute the mode shape for a given natural frequency omega.
     Returns:
@@ -157,7 +133,7 @@ def get_mode_shape(omega, n_points_per_segment=50):
         phi_vals: array of mode shape values
     """
     # Build the matrix at this omega
-    M = build_matrix(omega)
+    M = build_matrix(omega, S, mu, x, m_a)
     
     # Find the null space (eigenvector)
     # The null space gives a vector X such that M * X = 0
@@ -212,17 +188,21 @@ def get_mode_shape(omega, n_points_per_segment=50):
     return x_vals, phi_vals
 
 
-def plot_mode_shape(omega, mode_index=None, n_points_per_segment=50,
+def plot_mode_shape(omega, S, mu, x, m_a, mode_index=None, n_points_per_segment=50,
                     save=False, base_filename=None, plot_number=None, show=True):
     """
     Plot the mode shape for a given natural frequency.
     """
     global _ask_overwrite_done, _overwrite_all
 
-    x_vals, phi_vals = get_mode_shape(omega, n_points_per_segment)
+    x_vals, phi_vals = get_mode_shape(omega, S, mu, x, m_a, n_points_per_segment)
     
-    # Normalize the mode shape (so that max = 1)
+    # Normalize the mode shape
     phi_vals = phi_vals / np.max(np.abs(phi_vals))
+
+    # Force the sign for the displacement to be positive
+    if phi_vals[-1] < 0:
+        phi_vals = -phi_vals
     
     # Compute frequency in Hz
     f_hz = omega / (2 * np.pi)
@@ -249,11 +229,11 @@ def plot_mode_shape(omega, mode_index=None, n_points_per_segment=50,
     
     # Save if requested
     if save:
-        figures_dir = os.path.join(os.getcwd(), 'Figures')
-        os.makedirs(figures_dir, exist_ok=True)
+        outputs_dir = os.path.join(os.getcwd(), 'Outputs')
+        os.makedirs(outputs_dir, exist_ok=True)
 
         if base_filename is None:
-            mode_str = f"mode{mode_index:02d}" if mode_index is not None else "mode"
+            mode_str = f"Mode {mode_index:01d}" if mode_index is not None else "Mode"
             base_filename = f"{mode_str}"
 
         if plot_number is not None:
@@ -261,26 +241,7 @@ def plot_mode_shape(omega, mode_index=None, n_points_per_segment=50,
         else:
             filename = f"{base_filename}"
 
-        full_path = os.path.join(figures_dir, f"{filename}.png")
-
-        if os.path.exists(full_path):
-            if _overwrite_all:
-                response = 'y'
-            else:
-                print(f"\nFile '{filename}.png' already exists.")
-                response = input("Overwrite? (y/n/a): ").strip().lower()
-                
-                if response == 'a':
-                    _overwrite_all = True
-                    response = 'y'
-                elif response not in ('y', 'yes', 's', 'sim'):
-                    response = 'n'
-
-            if response == 'n':
-                print(f"Skipping: {full_path} (file already exists)")
-                plt.close(fig)
-                # Return 4 values consistently
-                return None, None, x_vals, phi_vals
+        full_path = os.path.join(outputs_dir, f"{filename}.png")
 
         plt.savefig(full_path, dpi=150, bbox_inches='tight')
         print(f"Figure saved to: {full_path}")
@@ -291,3 +252,34 @@ def plot_mode_shape(omega, mode_index=None, n_points_per_segment=50,
         plt.close(fig)
 
     return fig, ax, x_vals, phi_vals
+
+
+def save_mode_shape_data(omega, x_vals, phi_vals, filename, mode_index=None, save=False):
+    """
+    Save mode shape data to a text file.
+    """
+    if save:
+        # Force the sign for the displacement to be positive
+        if phi_vals[-1] < 0:
+            phi_vals = -phi_vals
+
+        outputs_dir = os.path.join(os.getcwd(), 'Outputs')
+        os.makedirs(outputs_dir, exist_ok=True)
+        
+        # Build filename
+        mode_str = f" mode {mode_index:01d}" if mode_index is not None else ""
+        full_path = os.path.join(outputs_dir, f"{filename}{mode_str}.txt")
+        
+        # Save data
+        with open(full_path, 'w') as f:
+            f.write(f"# Mode shape data\n")
+            f.write(f"# omega = {omega:.1f} rad/s\n")
+            f.write(f"# mode_index = {mode_index}\n")
+            f.write("# x (m)\t\tphi (normalized)\n")
+            for x, phi in zip(x_vals, phi_vals):
+                f.write(f"{x:.4f}\t{phi:.3f}\n")
+        
+        print(f"Mode shape data saved to: {full_path}")
+        return full_path
+    else:
+        return
