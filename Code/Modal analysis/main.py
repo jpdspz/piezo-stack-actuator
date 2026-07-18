@@ -1,8 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.optimize import root_scalar
-from matrix import build_matrix
-from utils import plot_mode_shape, save_mode_shape_data, load_and_plot_comparison
+from matrix import build_matrix, plot_mode_shape, save_mode_shape_data, load_and_plot_comparison
 import time
 import os
 
@@ -14,7 +13,7 @@ print(f"Start time: {time.strftime('%d/%m/%Y %H:%M:%S', time.localtime(start_tim
 E1 = 3.5e+9                 # Elastic modulus of the beam [Pa]
 b1 = 3.5e-2                 # Width of the beam [m]
 t1 = 6.0e-3                 # Thickness of the beam [m]
-I1 = (b1 * t1**3) / 12       # Area moment of inertia of the beam [m^4]
+I1 = (b1 * t1**3) / 12      # Area moment of inertia of the beam [m^4]
 rho1 = 8.5e+2               # Density of the beam [kg/m³]
 A1 = b1 * t1                # Cross-section area of the beam [m²]
 mu1 = rho1 * A1             # Mass per unit length of the beam [kg/m]
