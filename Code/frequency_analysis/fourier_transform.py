@@ -11,7 +11,6 @@ def dft(x):
 
     return dft
 
-
 def fft(x, ti=0, tf=60):
     """Compute the Fourier Transform using the Fast Fourier Transform algorithm."""
     N = len(x)                                      # Sample number

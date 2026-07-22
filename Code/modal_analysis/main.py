@@ -51,7 +51,7 @@ m_a = 0.140                         # Total mass of the actuator system [kg]
 # Saving and plotting options
 save_option_individual_plots = False
 show_option_individual_plots = False
-save_option_comparison_plots = False
+save_option_comparison_plots = True
 show_option_comparison_plots = True
 if save_option_comparison_plots == True or show_option_comparison_plots == True:
     save_option_mode_shape_txt = True
@@ -134,17 +134,17 @@ if __name__ == "__main__":
         )
         modes_without.append((w, x_vals, phi_vals))
         
-        if save_option_individual_plots:
-            if i == number_of_modes_to_plot - 1:
-                print(f"\nMode shape plots without actuator saved to {outputs_dir}")
+        # if save_option_individual_plots:
+        #     if i == number_of_modes_to_plot - 1:
+        #         print(f"\nMode shape plots without actuator saved to {outputs_dir}")
 
         # Save data to .txt file
         save_mode_shape_data(w, x_vals, phi_vals,
                             filename=f"Mode {i+1:01d} without actuator",
                             mode_index=None, save=save_option_mode_shape_txt)
         
-        if i == number_of_modes_to_plot - 1:
-            print(f"\nMode shape data without actuator saved as .txt to {outputs_dir}")
+        # if i == number_of_modes_to_plot - 1:
+        #     print(f"\nMode shape data without actuator saved as .txt to {outputs_dir}")
 
     # Plot mode shapes with actuator
     modes_with = []
@@ -163,17 +163,17 @@ if __name__ == "__main__":
         )
         modes_with.append((w, x_vals, phi_vals))
         
-        if save_option_individual_plots:
-            if i == number_of_modes_to_plot - 1:
-                print(f"\nMode shape plots with actuator saved to {outputs_dir}")
+        # if save_option_individual_plots:
+        #     if i == number_of_modes_to_plot - 1:
+        #         print(f"\nMode shape plots with actuator saved to {outputs_dir}")
 
         # Save data to .txt file
         save_mode_shape_data(w, x_vals, phi_vals,
                             filename=f"Mode {i+1:01d} with actuator",
                             mode_index=None, save=save_option_mode_shape_txt)
         
-        if i == number_of_modes_to_plot - 1:
-            print(f"\nMode shape data with actuator saved as .txt to {outputs_dir}")
+        # if i == number_of_modes_to_plot - 1:
+        #     print(f"\nMode shape data with actuator saved as .txt to {outputs_dir}")
         
 
     # Compare modes (with vs without actuator)
@@ -190,8 +190,8 @@ if __name__ == "__main__":
             bolt_positions=[x[1], x[2], x[4], x[5]]
         )
         
-        if i == number_of_modes_to_plot:
-            print(f"\nMode shape comparison plots saved to {outputs_dir}")
+        # if i == number_of_modes_to_plot:
+        #     print(f"\nMode shape comparison plots saved to {outputs_dir}")
 
 # Record end time
 end_time = time.time()
