@@ -49,10 +49,10 @@ x = [0.0, x1, x2, x3, x4, x5, L]
 m_a = 0.140                         # Total mass of the actuator system [kg]
 
 # Saving and plotting options
-save_option_individual_plots = True
+save_option_individual_plots = False
 show_option_individual_plots = False
-save_option_comparison_plots = True
-show_option_comparison_plots = False
+save_option_comparison_plots = False
+show_option_comparison_plots = True
 if save_option_comparison_plots == True or show_option_comparison_plots == True:
     save_option_mode_shape_txt = True
 elif save_option_comparison_plots == False and show_option_comparison_plots == False:
