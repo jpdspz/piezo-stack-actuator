@@ -7,3 +7,6 @@ __pycache__/
 *.tmp
 commit messages.txt
 ~$*
+*.bak
+*.dwl
+*.dwl2
