@@ -2,3 +2,4 @@
 - Subtract the mass of one angle from the actuator's total mass (it's already being accounted for as mass per unit length).
 - Update the .docx file with the new natural frequency results of the plastic beam system after correcting the parameters x_i, which were inputed incorrectly in the previous runs.
 - Add a Data folder with .json file containing the system parameters like elastic modulus, actuator position etc., so that all codes read the parameters from it
+- Change the modal hammer tip design to a hemisphere directly attached (glued or welded) to the load distribution plate or to the piezo brass layer
